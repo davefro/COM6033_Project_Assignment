@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>House Price Prediction</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Predict House Prices</h1>
+      <form action="/predict" method="post">
+        {% for short_name, full_name in ui_features_names.items() %}
+        <label for="{{ short_name }}">{{ full_name }}:</label>
+
+        <!-- Dropdown for Overall Qual with descriptive terms -->
+        {% if short_name == "Overall Qual" %}
+        <select name="{{ short_name }}" id="{{ short_name }}" required>
+          <option value="1">Very Poor</option>
+          <option value="2">Poor</option>
+          <option value="3">Fair</option>
+          <option value="4">Below Average</option>
+          <option value="5">Average</option>
+          <option value="6">Above Average</option>
+          <option value="7">Good</option>
+          <option value="8">Very Good</option>
+          <option value="9">Excellent</option>
+          <option value="10">Outstanding</option>
+        </select>
+
+        <!-- Dropdown for ordinal categorical features -->
+        {% elif short_name in ["Exter Qual", "Bsmt Qual", "Kitchen Qual", "Fireplace Qu", "Heating QC"] %}
+        <select name="{{ short_name }}" id="{{ short_name }}" required>
+          <option value="Po">Poor</option>
+          <option value="Fa">Fair</option>
+          <option value="TA">Average</option>
+          <option value="Gd">Good</option>
+          <option value="Ex">Excellent</option>
+        </select>
+
+        <!-- Dropdown for year-based features -->
+        {% elif short_name in ["Year Built", "Year Remod/Add"] %}
+        <select name="{{ short_name }}" id="{{ short_name }}" required>
+          {% for year in range(1900, 2024) %}
+          <option value="{{ year }}">{{ year }}</option>
+          {% endfor %}
+        </select>
+
+        <!-- Checkbox for binary features -->
+        {% elif short_name in ["Foundation_PConc", "BsmtFin Type 1_GLQ"] %}
+        <input
+          type="checkbox"
+          name="{{ short_name }}"
+          id="{{ short_name }}"
+          value="1"
+        />
+
+        <!-- Number inputs for continuous features -->
+        {% else %}
+        <input
+          type="number"
+          step="0.01"
+          name="{{ short_name }}"
+          id="{{ short_name }}"
+          required
+        />
+        {% endif %}
+        <br />
+        {% endfor %}
+
+        <button type="submit">Predict</button>
+      </form>
+    </div>
+  </body>
+</html>
